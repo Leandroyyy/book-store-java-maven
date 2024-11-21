@@ -17,7 +17,7 @@ Use o comando `mvn archetype:generate` para criar um novo projeto. Este comando 
 ### Comando:
 
 ```bash
-mvn archetype:generate -DgroupId=com.exemplo.projeto -DartifactId=meu-projeto -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mvn archetype:generate -DgroupId=br.com.fiap -DartifactId=book-store-java -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
 
 ### Explicação dos parâmetros:
@@ -85,14 +85,14 @@ Adicione ao `pom.xml` se necessário:
 ### Passos para usar o Spring Initializr:
 
 1. Acesse [Spring Initializr](https://start.spring.io/).
-2. Selecione as dependências necessárias:
+2. Selecione as dependências necessárias, pois usaremos essas bibliotecas para o nosso desenvolvimento:
    - **Oracle Driver**
    - **Spring Boot DevTools**
    - **Spring Web**
    - **Spring Data JPA**
 3. Clique em "Generate" para baixar o projeto.
 
-### Copie o conteúdo relevante do `pom.xml` gerado:
+### Copie o conteúdo relevante do `pom.xml` gerado e cole para sobrescrever os itens da tag dependencies:
 
 ```xml
 <parent>
