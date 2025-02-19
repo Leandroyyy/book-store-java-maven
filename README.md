@@ -86,10 +86,11 @@ Adicione ao `pom.xml` se necessário:
 
 1. Acesse [Spring Initializr](https://start.spring.io/).
 2. Selecione as dependências necessárias, pois usaremos essas bibliotecas para o nosso desenvolvimento:
-   - **Oracle Driver**
+   - **H2 Database**
    - **Spring Boot DevTools**
    - **Spring Web**
    - **Spring Data JPA**
+   - **lombok**
 3. Clique em "Generate" para baixar o projeto.
 
 ### Copie o conteúdo relevante do `pom.xml` gerado e cole para sobrescrever os itens da tag dependencies:
@@ -117,11 +118,11 @@ Adicione ao `pom.xml` se necessário:
         <scope>runtime</scope>
         <optional>true</optional>
     </dependency>
-    <dependency>
-        <groupId>com.oracle.database.jdbc</groupId>
-        <artifactId>ojdbc8</artifactId>
-        <scope>runtime</scope>
-    </dependency>
+	<dependency>
+	    <groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<scope>runtime</scope>
+	</dependency>
      <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -177,28 +178,31 @@ Para iniciar o servidor, navegue até o diretório do projeto e execute:
 mvn spring-boot:run
 ```
 
-## 9. Configurando a conexão com o Oracle no `application.properties`
+## 9. Configurando a conexão com o H2 no `application.properties`
 
-Crie o arquivo `application.properties` em `src/main/resources` e adicione as seguintes configurações para conectar ao banco de dados Oracle:
+Crie o arquivo `application.properties` em `src/main/resources` e adicione as seguintes configurações para conectar ao banco de dados H2:
 
 ```properties
-spring.datasource.url=jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl
-spring.datasource.username=seu_user
-spring.datasource.password=sua_senha
-spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+    spring.application.name=book-store
+    spring.datasource.url=jdbc:h2:mem:testdb
+    spring.datasource.driverClassName=org.h2.Driver
+    spring.datasource.username=sa
+    spring.datasource.password=
+    spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+    spring.h2.console.enabled=true
+    spring.h2.console.settings.web-allow-others=true
+    spring.h2.console.path=/h2-console
 ```
 
 #### Explicação:
 
-- **`spring.datasource.url`**: A URL de conexão com o banco de dados Oracle (ajuste `localhost`, `1521` e `xe` conforme sua configuração).
-- **`spring.datasource.username`**: O nome do usuário do banco de dados.
-- **`spring.datasource.password`**: A senha do usuário do banco de dados.
-- **`spring.datasource.driver-class-name`**: O driver JDBC necessário para a conexão com o Oracle (`oracle.jdbc.OracleDriver`).
-- **`spring.jpa.hibernate.ddl-auto`**: Define o comportamento do Hibernate em relação à criação do banco de dados (neste caso, `update` atualiza a estrutura do banco de dados).
-- **`spring.jpa.show-sql`**: Exibe as consultas SQL no console para depuração.
+- **`spring.datasource.url`**: A URL de conexão com o banco de dados H2. No caso de um banco em memória, usamos `jdbc:h2:mem:testdb`, onde `testdb` é o nome do banco.
+- **`spring.datasource.username`**: O usuário para acessar o banco H2 (por padrão, `sa`).
+- **`spring.datasource.password`**: A senha do usuário (por padrão, vazia).
+- **`spring.datasource.driverClassName`**: O driver JDBC necessário para a conexão com o H2 (`org.h2.Driver`).
+- **`spring.jpa.database-platform`**: Define o dialect do Hibernate para o H2 (`org.hibernate.dialect.H2Dialect`), garantindo compatibilidade com a estrutura do banco.
+- **`spring.h2.console.enabled`**: Ativa o console web do H2, permitindo acesso via navegador.
+- **`spring.h2.console.path`**: Define o caminho para acessar o console do H2 (por exemplo, `/h2-console`, acessível em `http://localhost:8080/h2-console`).
 
 ## 10. Rodando o projeto Spring Boot
 
@@ -255,12 +259,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@SequenceGenerator(name = "role", sequenceName = "SQ_TB_ROLE", allocationSize = 1)
 public class Book {
 
   @Id
   @Column
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role")
   private Long id;
 
   private String title;
